@@ -1,13 +1,15 @@
 import os
+from turtle import st
 import serial
 import threading
 import time
 
 CW = 0
 CCW = 1
-DeltaXS = 0
 OFF = 0
 ON = 65536
+#robot model
+DeltaXS = 0
 
 class DeltaX():
     def __init__(self, port = "None", baudrate = 115200, model = DeltaXS):
@@ -108,7 +110,7 @@ class DeltaX():
         self.__robot_responsted = False
         self.__serial.write(data.encode())
 
-    def wait_for_robot_repond(self):
+    def wait_for_robot_response(self):
         while self.__robot_responsted == False:
             pass
         return self.__latest_response
@@ -125,6 +127,38 @@ class DeltaX():
     def homing(self):
         gcode_str = 'G28'
         self.send_gcode_to_robot(gcode_str)
+
+    def syncPosition(self):
+
+    def syncAngle(self):  
+
+    def syncInput(self, I = [], A = []):
+        gcode_str = "M7"
+        if len(I) and len(A):
+            return
+
+        for index in range(0, len(I)):
+            gcode_str += " I" + str(I[index])
+        for index in range(0, len(I)):
+            gcode_str += " A" + str(A[index])
+
+        self.send_gcode_to_robot(gcode_str)
+
+    def getDigitalInput(self, I = []):
+        if len(I) == 0:
+            return []
+        _i = []
+        for index in range(0, len(I)):
+            _i.append(self.__i_input[I[index]])
+        return _i
+
+    def getAnalogInput(self, A = []):
+        if len(A) == 0:
+            return []
+        _a = []
+        for index in range(0, len(A)):
+            _a.append(self.__a_input[A[index]])
+        return _a
 
     def setDO(self, D = [], P = [], value = OFF, mode = 8):
         if len(D) == 0 and len(P) == 0:
