@@ -340,12 +340,12 @@ class DeltaX():
             self.__send_gcode_to_robot(gcode_str)
             return
         elif dir == DeltaX.CW:
-            gcode_str = 'M03 S'
+            gcode_str = 'M03'
         elif dir == DeltaX.CCW:
-            gcode_str = 'M04 S'
+            gcode_str = 'M04'
 
         if value != DeltaX.ON:
-            gcode_str += str(value)
+            gcode_str += ' S' + str(value)
 
         self.__send_gcode_to_robot(gcode_str)
 
