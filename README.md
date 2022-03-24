@@ -70,6 +70,4 @@ while 1:
     - moveL
     - moveC
 
-
-
-![DeltaX S](image.png)
+![DeltaX S](https://raw.githubusercontent.com/VanThanBK/python-deltax/master/image.png)
