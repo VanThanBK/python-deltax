@@ -49,6 +49,8 @@ while 1:
     - sendGcode
     - wait_for_robot_response
     - robot_response
+    - isResponded
+    - lastGcodeState
     - syncMotionParameters
     - motionParameters
     - sleep

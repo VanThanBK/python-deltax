@@ -33,6 +33,7 @@ class DeltaX():
     #
     ERROR = 0
     DONE = 1
+    NO_REPLY = 2
 
     #end effector
     Vacuum = 0
@@ -60,19 +61,27 @@ class DeltaX():
         self.__w_parameter = [400.0, 8000.0, 1000000.0, 20.0, 20.0]
         self.__u_parameter = [400.0, 8000.0, 1000000.0, 20.0, 20.0]
         self.__v_parameter = [400.0, 8000.0, 1000000.0, 20.0, 20.0]
+        self.timeout = 15
+        self.__connect_timeout = 3
+        self.__is_connecting = False
+        self.__last_time = time.time()
 
     def connect(self):
         """Open comport and connect with robot."""
         self.__serial.port = self.comport
         self.__serial.baudrate = self.baudrate
         self.__serial.timeout = 0
+
         try:
             self.__serial.open()
-        except:
+        except:           
             pass
         
         if self.__serial.isOpen():
+            self.__feedback_queue.clear()
             self.__send_gcode_to_robot('IsDelta')
+            self.__last_time = time.time()
+            self.__is_connecting = True
             self.__read_thread = threading.Thread(target=self.__serial_read_event, args=(self.__serial,))
             self.__read_thread.daemon = True
             self.__read_thread.start()
@@ -90,9 +99,23 @@ class DeltaX():
 
     def __serial_read_event(self, ser):
         while ser.isOpen():
+            if self.__is_connecting == True:
+                if time.time() - self.__last_time > self.__connect_timeout:
+                    self.disconnect()
+                    self.__is_connecting = False
+                    self.__feedback_queue.clear()
+            else:
+                if len(self.__feedback_queue) > 0:
+                    if time.time() - self.__last_time > self.timeout:
+                        self.__gcode_state = DeltaX.NO_REPLY
+                        self.__feedback_queue.clear()
+                else:
+                    self.__last_time = time.time()
+
             time.sleep(0.002)
             responst = ser.readline().decode()
             if responst != "":
+                self.__last_time = time.time()
                 self.__response_handling(responst)
     
     def __remote_feedback_queue(self, gcode_type):
@@ -115,6 +138,7 @@ class DeltaX():
 
         elif response == 'YesDelta':
             self.__is_connected = True 
+            self.__is_connecting = False
             self.__remote_feedback_queue(DeltaX.Gcode_Macro)
         else:
             if response.find(':') > 0:
@@ -165,6 +189,8 @@ class DeltaX():
                             self.__real_position[index] = float(_list_position[index])
                     
     def __send_gcode_to_robot(self, data):
+        if self.__serial.isOpen() == False:
+            return
         data = data + '\n'
         if data[0] == 'G':
             self.__feedback_queue.append(DeltaX.Gcode_G_M)
@@ -192,6 +218,17 @@ class DeltaX():
     def robot_response(self):
         """Last response from robot."""
         return self.__latest_response
+
+    def isResponded(self):
+        """Return True if robot responded"""
+        if len(self.__feedback_queue) > 0:
+            return False
+        else:
+            return True
+
+    def lastGcodeState(self):
+        """Return last gcode state"""
+        return self.__gcode_state
 
     def syncMotionParameters(self, axis = AXIS_XYZ):
         """Using for DeltaX S. Get motion parameters from robot."""
