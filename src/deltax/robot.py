@@ -91,7 +91,11 @@ class DeltaX():
     def disconnect(self):
         """Disconnect with robot."""
         self.__is_connected = False
-        self.__serial.close()
+        
+        try:
+            self.__serial.close()
+        except:           
+            pass
 
     def is_connected(self):
         """Return is robot connected."""
@@ -113,10 +117,14 @@ class DeltaX():
                     self.__last_time = time.time()
 
             time.sleep(0.002)
-            responst = ser.readline().decode()
+            try:
+                responst = ser.readline().decode()
+            except:           
+                pass
             if responst != "":
                 self.__last_time = time.time()
                 self.__response_handling(responst)
+                responst = ""
     
     def __remote_feedback_queue(self, gcode_type):
         if gcode_type == DeltaX.Gcode_None and len(self.__feedback_queue) > 0:
@@ -135,7 +143,8 @@ class DeltaX():
         self.__latest_response = response
         if response == 'Ok':
             self.__remote_feedback_queue(DeltaX.Gcode_G_M)
-
+        elif response == 'Init Success!':
+            pass
         elif response == 'YesDelta':
             self.__is_connected = True 
             self.__is_connecting = False
