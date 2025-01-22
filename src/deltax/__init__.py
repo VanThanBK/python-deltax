@@ -1,4 +1,22 @@
-__version__ = "0.0.1.6"
-__name__ = "deltax"
+from .robot import Robot
+from .encoder import Encoder
+from .camera import Camera 
+from .conveyor import Conveyor
+from .framework import DeltaXFramework
+from .vision import Vision, DetectedObject
+from .tracking import Tracking, TrackedObject
 
-from .robot import DeltaX
+__version__ = "0.1.0"
+
+# Export classes
+__all__ = [
+    'Robot',
+    'Encoder', 
+    'Camera',
+    'Conveyor',
+    'DeltaXFramework',
+    'Vision',
+    'DetectedObject',
+    'Tracking',
+    'TrackedObject'
+]

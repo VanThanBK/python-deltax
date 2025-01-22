@@ -1,6 +1,6 @@
 from deltax import DeltaX
 
-robot = DeltaX(port = "COM4", model=DeltaX.DeltaX_V2)
+robot = DeltaX(port = "COM3", model=DeltaX.DeltaX_V2)
 if robot.connect() == True:
     print("connected")
 robot.moveL([20,50,-800])
