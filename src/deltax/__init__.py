@@ -1,22 +1,51 @@
-from .robot import Robot
-from .encoder import Encoder
-from .camera import Camera 
-from .conveyor import Conveyor
+from .core import (
+    Robot,
+    Camera,
+    Encoder,
+    Conveyor,
+    Feeder
+)
+
+from .vision import (
+    YOLODetector,
+    ColorDetector,
+    ObjectTracker,
+    CameraCalibrator
+)
+
+from .systems import (
+    FeederSystem,
+    ConveyorSystem,
+    MultiRobotSystem
+)
+
 from .framework import DeltaXFramework
-from .vision import Vision, DetectedObject
-from .tracking import Tracking, TrackedObject
+from .settings import Settings
+from .errors import DeltaXError
 
-__version__ = "0.1.0"
+__version__ = '1.0.0'
 
-# Export classes
 __all__ = [
+    # Core
     'Robot',
-    'Encoder', 
-    'Camera',
+    'Camera', 
+    'Encoder',
     'Conveyor',
+    'Feeder',
+    
+    # Vision
+    'YOLODetector',
+    'ColorDetector',
+    'ObjectTracker',
+    'CameraCalibrator',
+    
+    # Systems
+    'FeederSystem',
+    'ConveyorSystem', 
+    'MultiRobotSystem',
+    
+    # Framework
     'DeltaXFramework',
-    'Vision',
-    'DetectedObject',
-    'Tracking',
-    'TrackedObject'
+    'Settings',
+    'DeltaXError'
 ]

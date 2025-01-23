@@ -4,6 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="deltax",
+    version="1.0.0",
     author="Than Nguyen",
     author_email="jonyvanthan@gmail.com",
     description="Python library to control an DeltaX robot",
@@ -20,7 +21,19 @@ setup(
     package_dir={"": "src"},
     packages=find_packages(where="src"),
     install_requires=[
-        "PySide6>=6.0.0",
+        "numpy",
+        "opencv-python",
+        "PySide6",
+        "pyserial",
+        "torch",  # For YOLO
     ],
+    extras_require={
+        "dev": [
+            "pytest",
+            "pytest-cov",
+            "black",
+            "flake8",
+        ]
+    },
     python_requires=">=3.6",
 )
